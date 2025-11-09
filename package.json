@@ -1,0 +1,18 @@
+{
+  "name": "collaborative-canvas",
+  "version": "1.0.0",
+  "main": "server/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon server/server.js",
+    "start": "node server/server.js"
+  },
+  "author": "Anjeet Singh",
+  "license": "ISC",
+  "description": "this is a collaborative canvas app",
+  "dependencies": {
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10",
+    "socket.io": "^4.8.1"
+  }
+}
