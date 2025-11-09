@@ -1,4 +1,3 @@
-// Basic express + socket.io setup for the canvas app.
 import express from "express";
 import http from "http";
 import path from "path";
@@ -21,7 +20,6 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../client/index.html"));
 });
 
-// Just one room for now. Could add more later.
 const rooms = new RoomManager();
 const defaultRoom = rooms.createRoom("main");
 
@@ -72,7 +70,6 @@ io.on("connection", (socket) => {
       .emit("stroke:end", { strokeId: payload.strokeId, userId });
   });
 
-  // request: undo / redo (global)
   socket.on("undo", () => {
     const res = room.state.undo();
     if (res && res.appliedOp) {
@@ -96,7 +93,6 @@ io.on("connection", (socket) => {
       socket.emit("no-op", { reason: "nothing-to-redo" });
     }
   });
-  // client requests full reset or request history slice
   socket.on("request:state", () => {
     socket.emit("room:state", {
       strokes: room.state.getVisibleStrokes(),
@@ -106,7 +102,6 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("disconnect", userId);
-    // clear any in-progress strokes from this user
     room.state.cancelTransientsByUser(userId);
     room.removeClient(userId);
     socket.to(room.id).emit("user:left", { userId });
