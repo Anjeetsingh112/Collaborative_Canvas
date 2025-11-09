@@ -1,6 +1,4 @@
 // client/main.js
-// Wiring: pointer events, batching, prediction, sending to server.
-
 const socket = io();
 
 const COLOR_INPUT = document.getElementById("color");
@@ -24,18 +22,16 @@ function setTool(tool) {
 }
 BRUSH_BTN.addEventListener("click", () => setTool("brush"));
 ERASER_BTN.addEventListener("click", () => setTool("eraser"));
-setTool("brush"); // default
+setTool("brush"); 
 
 // utility: uuid generator (simple)
 function uuid() {
   return "s-" + Math.random().toString(36).slice(2, 9);
 }
 
-// buffer for local points to batch-send
 let localPointBuffer = [];
 let sendTimer = null;
 
-// when socket connects set status and id
 socket.on("connect", () => {
   myUserId = socket.id;
   STATUS.innerText = "Connected: " + myUserId.slice(0, 6);
@@ -59,7 +55,6 @@ socket.on("disconnect", (reason) => {
   STATUS.innerText = "Disconnected" + (reason ? ` (${reason})` : "");
 });
 
-// pointer handling for mouse + touch
 (function attachPointer() {
   const canvasEl = CanvasApp.getCanvasElement();
   const canvasRect = () => CanvasApp.getCanvasBoundingRect();
@@ -85,11 +80,10 @@ socket.on("disconnect", (reason) => {
 
   function start(e) {
     e.preventDefault();
-    drawing = true; // IMPORTANT!
+    drawing = true; 
     const p = getPos(e);
     currentStrokeId = uuid();
 
-    // Determine stroke color and tool (eraser handled via compositing in canvas)
     const drawColor = COLOR_INPUT.value;
 
     const meta = {
@@ -108,7 +102,6 @@ socket.on("disconnect", (reason) => {
     CanvasApp.appendLocalPoints([p]);
     socket.emit("stroke:chunk", { strokeId: currentStrokeId, points: [p] });
 
-    // start timer to flush buffer
     sendTimer = setInterval(() => {
       if (localPointBuffer.length > 0) {
         socket.emit("stroke:chunk", {
@@ -126,7 +119,6 @@ socket.on("disconnect", (reason) => {
       return;
     }
     e.preventDefault();
-    // simple point thinning to reduce memory/traffic
     const last =
       localPointBuffer.length > 0
         ? localPointBuffer[localPointBuffer.length - 1]
@@ -145,7 +137,6 @@ socket.on("disconnect", (reason) => {
   function end(e) {
     if (!drawing) return;
     if (e && e.preventDefault) e.preventDefault();
-    // flush remaining buffer
     if (sendTimer) {
       clearInterval(sendTimer);
       sendTimer = null;
