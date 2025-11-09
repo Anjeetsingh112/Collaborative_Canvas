@@ -16,11 +16,10 @@ Multi-user canvas with live strokes, undo/redo, and a simple room. Plain JS on t
 - Backend: Node.js, Express, Socket.io (ESM)
 
 ## Setup
-
-```powershell
+```
 npm install
 npm run dev
-
+```
 
 Server runs on http://localhost:3000 and serves the client from `client/`.
 
@@ -36,8 +35,8 @@ Server runs on http://localhost:3000 and serves the client from `client/`.
 
 ## Time spent
 - Planning/wiring: ~1–2h
-- Canvas + streaming: ~2–3h
-- Undo/redo + fixes: ~1–2h
+- Canvas + streaming: ~3–4h
+- Undo/redo + fixes: ~2–3h
 - Polish/docs: ~0.5–1h
 
 ## Scripts
@@ -46,21 +45,22 @@ Server runs on http://localhost:3000 and serves the client from `client/`.
 
 ## Folder structure
 ```
-
 collaborative-canvas/
-client/
-index.html
-style.css
-canvas.js
-main.js
-server/
-server.js
-rooms.js
-drawing-state.js
-package.json
-README.md
-ARCHITECTURE.md
+├── client/
+│   ├── index.html
+│   ├── canvas.js
+│   ├── main.js
+│   ├── style.css
+│   └── websocket.js
+├── server/
+│   ├── server.js
+│   ├── rooms.js
+│   └── drawing-state.js
+├── package.json
+├── README.md
+└── ARCHITECTURE.md
 
 ```
+## Author
 
-```
+GitHub: https://github.com/Anjeetsingh112
