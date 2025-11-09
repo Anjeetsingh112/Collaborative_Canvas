@@ -1,32 +1,99 @@
-/* client/style.css */
-html,
-body {
+
+html, body {
   height: 100%;
   margin: 0;
-  font-family: system-ui, Arial;
-  background: #f5f6f7;
+  background: #f0f2f5;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
 }
+
+h1.logo {
+  font-size: 18px;
+  margin: 0;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Top Toolbar */
 #topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
-  background: #FFFFFF;
-  box-shadow: 0 0 10px #FFFFFF;
+  padding: 10px 20px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 2;
 }
+
 #tools {
   display: flex;
   gap: 8px;
   align-items: center;
 }
-#users {
+
+#tools input[type="color"] {
+  border: none;
+  width: 56px;
+  height: 36px;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 4px;
+}
+
+#tools input[type="range"] {
+  width: 100px;
+  accent-color: #007bff;
+}
+
+/* Buttons */
+button {
+  padding: 4px 10px;
+  border: none;
+  border-radius: 6px;
   font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+button.tool {
+  background: #f5f6f7;
   color: #333;
 }
+
+button.tool:hover {
+  background: #e0e0e0;
+}
+
+button.active {
+  background: #007bff;
+  color: #fff;
+}
+
+button.action {
+  background: #e9ecef;
+}
+
+button.action:hover {
+  background: #dee2e6;
+}
+
+/* Status and Footer */
+#status-wrap {
+  font-size: 13px;
+  color: #666;
+}
+
+/* Canvas Area */
 #canvas-wrap {
   position: relative;
-  height: calc(100% - 52px);
+  flex-grow: 1;
+  background: #ffffff;
+  overflow: hidden;
 }
+
 canvas {
   width: 100%;
   height: 100%;
@@ -34,19 +101,25 @@ canvas {
   background: white;
   cursor: crosshair;
 }
+
+/* Cursor indicators for other users */
 .user-cursor {
   position: absolute;
   pointer-events: none;
   transform: translate(-50%, -50%);
   font-size: 12px;
-}
-#status {
-  font-size: 13px;
-  color: #666;
-  margin-left: 8px;
-}
-#tools button.active {
-  background: #007bff;
-  color: white;
+  padding: 3px 6px;
   border-radius: 6px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 6px rgba(0,0,0,0.2);
+}
+@media screen and (max-width: 600px) {
+ h1.logo {
+  display: none;
+}
+/* Status and Footer */
+#status-wrap {
+  font-size: 10px;
+}
 }
