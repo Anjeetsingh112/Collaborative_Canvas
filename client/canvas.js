@@ -96,9 +96,16 @@ const CanvasApp = (function () {
       } else if (op.type === "remove") {
         strokes.delete(op.strokeId);
       }
-      redrawAll();
-      // update history UI if needed
-      // (we don't show pointer in UI in this simple client)
+      // Small add can be drawn directly; otherwise redraw everything
+      if (
+        op.type === "add" &&
+        op.stroke.points &&
+        op.stroke.points.length <= 2
+      ) {
+        drawStroke(ctx, op.stroke);
+      } else {
+        redrawAll();
+      }
     });
 
     socket.on("room:joined", (payload) => {

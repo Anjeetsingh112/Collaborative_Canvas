@@ -106,6 +106,8 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("disconnect", userId);
+    // clear any in-progress strokes from this user
+    room.state.cancelTransientsByUser(userId);
     room.removeClient(userId);
     socket.to(room.id).emit("user:left", { userId });
   });

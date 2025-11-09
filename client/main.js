@@ -42,6 +42,23 @@ socket.on("connect", () => {
   CanvasApp.init(socket);
 });
 
+// basic network status updates
+socket.io.on("error", (err) => {
+  STATUS.innerText = "Network error";
+  console.error("socket error", err);
+});
+socket.io.on("reconnect_attempt", () => {
+  STATUS.innerText = "Reconnecting…";
+});
+socket.io.on("reconnect", () => {
+  STATUS.innerText = "Reconnected: " + (socket.id || "");
+  // pull fresh state after reconnect
+  socket.emit("request:state");
+});
+socket.on("disconnect", (reason) => {
+  STATUS.innerText = "Disconnected" + (reason ? ` (${reason})` : "");
+});
+
 // pointer handling for mouse + touch
 (function attachPointer() {
   const canvasEl = CanvasApp.getCanvasElement();
@@ -109,14 +126,25 @@ socket.on("connect", () => {
       return;
     }
     e.preventDefault();
-    localPointBuffer.push(p);
-    CanvasApp.appendLocalPoints([p]);
+    // simple point thinning to reduce memory/traffic
+    const last =
+      localPointBuffer.length > 0
+        ? localPointBuffer[localPointBuffer.length - 1]
+        : null;
+    const dx = last ? p.x - last.x : Infinity;
+    const dy = last ? p.y - last.y : Infinity;
+    const dist2 = dx * dx + dy * dy;
+    if (!last || dist2 > 2.25) {
+      // ~1.5px threshold
+      localPointBuffer.push(p);
+      CanvasApp.appendLocalPoints([p]);
+    }
     sendCursor(p.x, p.y);
   }
 
   function end(e) {
     if (!drawing) return;
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     // flush remaining buffer
     if (sendTimer) {
       clearInterval(sendTimer);
@@ -138,11 +166,17 @@ socket.on("connect", () => {
   canvasEl.addEventListener("mousedown", start);
   window.addEventListener("mousemove", move);
   window.addEventListener("mouseup", end);
+  canvasEl.addEventListener("mouseleave", end);
 
   // support touch
   canvasEl.addEventListener("touchstart", start, { passive: false });
   window.addEventListener("touchmove", move, { passive: false });
   window.addEventListener("touchend", end);
+  window.addEventListener("touchcancel", end);
+
+  // best-effort cleanup if the tab goes away
+  window.addEventListener("blur", end);
+  window.addEventListener("beforeunload", end);
 })();
 
 // Undo / Redo buttons

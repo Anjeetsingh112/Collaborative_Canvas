@@ -4,6 +4,8 @@
 //   { type:'remove', strokeId, removedStroke }
 // historyPointer = count of applied ops.
 
+const MAX_HISTORY = 2000; // cap to avoid unbounded memory growth
+
 class DrawingState {
   constructor() {
     this.strokes = new Map(); // strokeId -> stroke
@@ -84,6 +86,13 @@ class DrawingState {
     // apply this op to state
     this.applyOpDirect(op);
     this.historyPointer++;
+
+    // prune old history if too large (keep strokes state as-is)
+    if (this.history.length > MAX_HISTORY) {
+      const overflow = this.history.length - MAX_HISTORY;
+      this.history.splice(0, overflow);
+      this.historyPointer = Math.max(0, this.historyPointer - overflow);
+    }
   }
 
   // inverse op for undo
@@ -135,6 +144,13 @@ class DrawingState {
     this.applyOpDirect(op);
     this.historyPointer++;
     return { appliedOp: op };
+  }
+
+  // drop any in-progress strokes for a user (called on disconnect)
+  cancelTransientsByUser(userId) {
+    for (const [id, s] of this.transient) {
+      if (s.userId === userId) this.transient.delete(id);
+    }
   }
 }
 export default DrawingState;
