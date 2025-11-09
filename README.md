@@ -2,6 +2,10 @@
 
 Multi-user canvas with live strokes, undo/redo, and a simple room. Plain JS on the client, Node + Socket.io on the server.
 
+## Live Demo
+
+- Render: https://collaborative-canvas-jj6m.onrender.com
+
 ## Features
 
 - Live drawing (stroke start/chunks/end broadcast as you draw)
@@ -64,3 +68,4 @@ collaborative-canvas/
 ## Author
 
 GitHub: https://github.com/Anjeetsingh112
+
